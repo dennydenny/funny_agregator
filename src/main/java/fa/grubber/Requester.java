@@ -33,13 +33,14 @@ public class Requester {
 	public static List<WallpostFull> getWallPostsFromPublic(Public pub)
 	{
 		List<WallpostFull> list;
+		int count = Integer.valueOf(Settings.settings.get("requestedwallposts"));
 		
 		try {
 			init();
 			GetResponse response = vk.wall().get(actor)
 										.ownerId(pub.getPublicId() * -1)
 										.filter(WallGetFilter.OWNER)
-										.count(100)
+										.count(count)
 										.execute();
 			list = new ArrayList <WallpostFull>();
 			list = response.getItems();
@@ -54,5 +55,4 @@ public class Requester {
 		
 		return null;
 	}
-
 }

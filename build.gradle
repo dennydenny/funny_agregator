@@ -22,6 +22,7 @@ dependencies {
     // The production code uses the SLF4J logging API at compile time
     compile 'com.vk.api:sdk:0.4.3'
     compile 'mysql:mysql-connector-java:5.1.39'
+    compile 'org.apache.commons:commons-configuration2:2.1.1'
     
     //Binding for Log4J --> 
     compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.7' 

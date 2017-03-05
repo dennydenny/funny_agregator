@@ -30,7 +30,10 @@ public class DBHelper {
     private void openConnection()
     {
     	try {
-			con = DriverManager.getConnection(url, user, password);
+			con = DriverManager.getConnection(
+					Settings.settings.get("database_url"), 
+					Settings.settings.get("database_user"), 
+					Settings.settings.get("database_password"));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -105,9 +108,11 @@ public class DBHelper {
     	{
     		if (isPostExist(dpost))
     		{
-    			LOG.info(String.format("Пост уже есть в нашей БД.. PublicId: %d, postId %d", 
+    			LOG.info(String.format("Пост уже есть в нашей БД. PublicId: %d, postId %d", 
     					dpost.getPublicId(), 
     					dpost.getPostId()));
+    			
+    			// Проверяем, актуальное ли кол-во лайков у поста.
     			if (!isLikeCountActual(dpost))
     			{
     				LOG.info(String.format("Информация в БД о посте неактуальна. Обновляем информацию. PublicId: %d, postId %d", 
@@ -338,7 +343,6 @@ public class DBHelper {
             try { stmt.close(); } catch(SQLException se) { /*can't do anything */ }
             try { rs.close(); } catch(SQLException se) { /*can't do anything */ }
         }
-		return false;
-    	
+		return false;	
     }
 }

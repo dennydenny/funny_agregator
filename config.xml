@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<configuration>
+	<database_url>jdbc:mysql://localhost:3306/agregator_db</database_url>
+	<database_user>johny</database_user>
+	<database_password>johny</database_password>
+	
+	<!-- Максимум 100 постов -->
+	<requestedwallposts>100</requestedwallposts>
+</configuration>

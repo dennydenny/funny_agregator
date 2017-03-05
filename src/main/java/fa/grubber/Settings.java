@@ -1,8 +1,9 @@
 package fa.grubber;
 
-public class Settings {
+import java.util.Map;
 
-	/*
-	 * 79525017 - Бесплатный, https://vk.com/besplatny
-	 */
+public class Settings {
+	
+	public static Map<String, String> settings = XMLParser.ParseConfig();
+
 }

@@ -1,5 +1,6 @@
 package fa.grubber;
 
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,14 +27,7 @@ public class Controller {
 			db.WriteDownloadedPosts(wallPosts);
 			wallPosts.clear();
 		}
-		/*
-		for (WallpostFull post : wallPosts)
-		{
-			System.out.println(post.getText());
-			System.out.println(post.getLikes());
-		}	
-		*/
-		LOG.info("=== END ===");
+		
+		LOG.info("=== END ===");	
 	}
-
 }
