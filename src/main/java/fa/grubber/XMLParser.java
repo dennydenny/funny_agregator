@@ -1,6 +1,7 @@
 package fa.grubber;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -29,7 +30,11 @@ public class XMLParser {
 	    	Document doc = dBuilder.parse(file);
 	    	readNode(doc.getChildNodes());
 	    	return settings;
-	    } 
+	    }
+	    catch (FileNotFoundException filenotfound)
+	    {
+	    	LOG.error("Не удалось найти файл конфигурации. Возникла ошибка: " + filenotfound.getMessage());
+	    }
 	    catch (Exception e) {
 	    	LOG.error("Возникла ошибки при парсинге XML: " + e.getMessage());
 	    }

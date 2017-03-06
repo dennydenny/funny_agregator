@@ -17,9 +17,9 @@ import com.vk.api.sdk.objects.wall.WallpostFull;
 public class DBHelper {
 
     // JDBC URL, username and password of MySQL server
-    private static final String url = "jdbc:mysql://localhost:3306/agregator_db";
-    private static final String user = "johny";
-    private static final String password = "johny";
+    private static final String url = Settings.settings.get("database_url");
+    private static final String user = Settings.settings.get("database_user");
+    private static final String password = Settings.settings.get("database_password");
     private static final Logger LOG = LoggerFactory.getLogger(DBHelper.class);
  
     // JDBC variables for opening and managing connection
@@ -30,10 +30,7 @@ public class DBHelper {
     private void openConnection()
     {
     	try {
-			con = DriverManager.getConnection(
-					Settings.settings.get("database_url"), 
-					Settings.settings.get("database_user"), 
-					Settings.settings.get("database_password"));
+			con = DriverManager.getConnection(url, user, password);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -52,8 +49,8 @@ public class DBHelper {
     // Метод, возвращающий коллекцию пабликов.
     public ArrayList<Public> getPublics()
     {
-    	LOG.debug("Начинаем загрузку списка пабликов");
-    	String query = "select id, name, url from publics";
+    	LOG.debug("Начинаем загрузку списка пабликов.");
+    	String query = "select id, name, url, subs_count from publics";
     	ArrayList<Public> list = new ArrayList<Public> ();
         Statement stmt = null;
         ResultSet rs = null;
@@ -69,10 +66,11 @@ public class DBHelper {
             	pub.setPublicId(rs.getInt("id"));
             	pub.setPublicName(rs.getString("Name"));
             	pub.setPublicUrl(rs.getString("URL"));
+            	pub.setPublicSubsCount(rs.getInt("Subs_count"));
             	
             	list.add(pub);	
             }
-         LOG.info("Список пабликов успешно загружен");
+         LOG.info("Список пабликов успешно загружен.");
         } 
         catch (SQLException sqlEx) {
             LOG.error(String.format("При загрузке списка пабликов возникла ошибка: %S", sqlEx.getMessage()));
@@ -344,5 +342,35 @@ public class DBHelper {
             try { rs.close(); } catch(SQLException se) { /*can't do anything */ }
         }
 		return false;	
+    }
+
+    // Метод, осуществляющий запись обновлённого числа подписчиков паблика.
+    public void updatePublicSubsCount(Public pub, int newCount)
+    {
+    	LOG.debug(String.format("Обновляем информацию о кол-ве подписчиков в БД. PublicId: %d ", pub.getPublicId()));
+    	
+    	String query = "update publics set Subs_count = ? where id = ?";
+    	PreparedStatement stmt = null;
+    	
+        try {
+        	openConnection();
+        	stmt = con.prepareStatement(query);
+        	stmt.setInt(1, newCount);
+        	stmt.setInt(2, pub.getPublicId());
+        	
+            stmt.executeUpdate();
+
+            LOG.debug(String.format("Инфо о кол-ве подписчкиков успешно обновлена в БД. Было: %d, Стало: %d, PublicId: %d", 
+					pub.getPublicSubsCount(),
+					newCount,
+					pub.getPublicId()));
+        } 
+        catch (SQLException sqlEx) {
+            LOG.error(String.format("При обновлении кол-ва подписчиков в БД возникла ошибка: %S", sqlEx.getMessage()));
+        } 
+        finally {
+        	closeConnection();
+            try { stmt.close(); } catch(SQLException se) { /*can't do anything */ }
+        }
     }
 }

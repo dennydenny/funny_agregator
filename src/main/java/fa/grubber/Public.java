@@ -11,6 +11,9 @@ public class Public {
 	// URL паблика.
 	private String _url;
 	
+	// Кол-во подписчиков.
+	private int _subsCount;
+	
 	public int getPublicId()
 	{
 		return _id;
@@ -39,5 +42,15 @@ public class Public {
 	public void setPublicUrl(String url)
 	{
 		_url = url;
+	}
+	
+	public int getPublicSubsCount()
+	{
+		return _subsCount;
+	}
+	
+	public void setPublicSubsCount(int count)
+	{
+		_subsCount = count;
 	}
 }

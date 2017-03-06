@@ -6,4 +6,7 @@
 	
 	<!-- Максимум 100 постов -->
 	<requestedwallposts>100</requestedwallposts>
+	<token>ecd7479e0e24dff0e1095a92410f832b2959ea2e3312df33ac233c2ef4277e5913fd41acb5e9577ee28d1</token>
+	<user_id>414240954</user_id>
+	
 </configuration>

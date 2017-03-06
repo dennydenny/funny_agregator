@@ -14,9 +14,9 @@ import com.vk.api.sdk.httpclient.HttpTransportClient;
 
 public class VKAuthorization {
 
-	private final static String _token = "ecd7479e0e24dff0e1095a92410f832b2959ea2e3312df33ac233c2ef4277e5913fd41acb5e9577ee28d1";
+	private final static String _token = Settings.settings.get("token");
 	private static UserActor _actor;
-	private final static int _userId = 414240954;
+	private final static int _userId = Integer.valueOf(Settings.settings.get("user_id"));
 	private static final Logger LOG = LoggerFactory.getLogger(VKAuthorization.class);
 	
 	/*
