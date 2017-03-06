@@ -192,7 +192,7 @@ public class DBHelper {
     	// Получаем информацию о кол-ве лайков ДО обновления.
     	int oldLikesCount = getPostLikesCountFromDB(post);
     	
-    	String query = "update downloaded_posts set likes_count = ?, reposts_count = ? where public_id = ? and post_id = ?";
+    	String query = "update downloaded_posts set likes_count = ?, reposts_count = ?, timestamp = current_timestamp where public_id = ? and post_id = ?";
     	PreparedStatement stmt = null;
     	
     	try {
@@ -349,7 +349,7 @@ public class DBHelper {
     {
     	LOG.debug(String.format("Обновляем информацию о кол-ве подписчиков в БД. PublicId: %d ", pub.getPublicId()));
     	
-    	String query = "update publics set Subs_count = ? where id = ?";
+    	String query = "update publics set Subs_count = ?, timestamp = current_timestamp where id = ?";
     	PreparedStatement stmt = null;
     	
         try {
