@@ -1,11 +1,10 @@
-package fa.grubber;
+package fa.common;
 
-import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.logging.slf4j.SLF4JLoggingException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,12 +12,24 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.wall.WallpostFull;
 
+import fa.grubber.DBHelper;
+import fa.grubber.Requester;
+
 public class Controller {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Controller.class);
 	
-	public static void main(String[] args) throws InterruptedException, ApiException, ClientException {
+	public static void main(String[] args) throws InterruptedException, ApiException, ClientException  {
 		LOG.info("=== START ===");
+		
+		runGrubber();
+		
+		LOG.info("=== END ===");	
+	}
+	
+	// Запуск граббера.
+	private static void runGrubber() throws InterruptedException, ApiException, ClientException
+	{
 		DBHelper db = new DBHelper();
 		
 		// Получаем список пабликов.
@@ -44,9 +55,7 @@ public class Controller {
 			}
 			
 			TimeUnit.SECONDS.sleep(5);
-			//wallPosts.clear();
+			wallPosts.clear();
 		}
-		
-		LOG.info("=== END ===");	
 	}
 }

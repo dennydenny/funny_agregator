@@ -19,6 +19,9 @@ import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import com.vk.api.sdk.queries.groups.GroupField;
 import com.vk.api.sdk.queries.wall.WallGetFilter;
 
+import fa.common.Public;
+import fa.common.Settings;
+
 public class Requester {
 	
 	private static TransportClient transportClient;

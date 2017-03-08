@@ -11,6 +11,8 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 
+import fa.common.Settings;
+
 
 public class VKAuthorization {
 

@@ -1,4 +1,4 @@
-package fa.grubber;
+package fa.common;
 
 import java.util.Map;
 

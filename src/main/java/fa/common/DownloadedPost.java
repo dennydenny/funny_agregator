@@ -1,7 +1,6 @@
-package fa.grubber;
+package fa.common;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class DownloadedPost {
 	// Идентификатор паблика.

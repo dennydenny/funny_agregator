@@ -14,6 +14,10 @@ import org.slf4j.LoggerFactory;
 
 import com.vk.api.sdk.objects.wall.WallpostFull;
 
+import fa.common.DownloadedPost;
+import fa.common.Public;
+import fa.common.Settings;
+
 public class DBHelper {
 
     // JDBC URL, username and password of MySQL server
