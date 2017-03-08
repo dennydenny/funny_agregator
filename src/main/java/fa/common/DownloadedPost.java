@@ -93,7 +93,7 @@ public class DownloadedPost {
 		this._postDatetime = this.convertUnixtimeToDate(postDatetime);
 	}
 	
-	// Конструктор.
+	// Конструктор с int postDatetime
 	public DownloadedPost(int publicId, int postId, String text, int likesCount, int repostsCount, int postDatetime)
 	{
 		this.setPublicId(publicId);
@@ -103,6 +103,17 @@ public class DownloadedPost {
 		this.setRepostsCount(repostsCount);
 		this.setPostDatetime(postDatetime);
 	}
+	
+	// Конструктор с String postDatetime
+	public DownloadedPost(int publicId, int postId, String text, int likesCount, int repostsCount, String postDatetime)
+	{
+		this.setPublicId(publicId);
+		this.setPostId(postId);
+		this.setText(text);
+		this.setLikesCount(likesCount);
+		this.setRepostsCount(repostsCount);
+		this.setPostDatetime(postDatetime);
+	}	
 	
 	// Метод, осуществляющий конвертацию Unix time в Date, который примет MySQL.
 	private String convertUnixtimeToDate(int unixtime)
