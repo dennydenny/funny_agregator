@@ -88,6 +88,8 @@ public class DBHelper {
     {
     	if (posts.isEmpty()) throw new IllegalStateException("Список постов для записи пуст.");
     	
+    	//TODO: Вынести логику "конвертации" в отдельный метод.
+    	
     	// "Конвертируем WallpostFull в наш DownloadedPost.
     	ArrayList<DownloadedPost> downloadedPosts = new ArrayList<DownloadedPost>();
     	for (WallpostFull post : posts)
@@ -96,7 +98,8 @@ public class DBHelper {
     				post.getId(), 
     				post.getText(), 
     				post.getLikes().getCount(), 
-    				post.getReposts().getCount());
+    				post.getReposts().getCount(),
+    				post.getDate());
     		downloadedPosts.add(dpost);
     	}
     	
@@ -263,8 +266,8 @@ public class DBHelper {
     			post.getPublicId(), 
     			post.getPostId()));
  
-    	
-    	String query = "INSERT INTO downloaded_posts(public_id, post_id, text, likes_count, reposts_count) VALUES (?, ?, ?, ?, ?)";
+    	String query = 
+    			"INSERT INTO downloaded_posts(public_id, post_id, text, likes_count, reposts_count, post_datetime) VALUES (?, ?, ?, ?, ?, ?)";
     	PreparedStatement stmt = null;
     	
     	try {
@@ -275,6 +278,7 @@ public class DBHelper {
         	stmt.setString(3, post.getText());
         	stmt.setInt(4, post.getLikesCount());
         	stmt.setInt(5, post.getRepostsCount());
+        	stmt.setString(6, post.getPostDatetime());
         	
             stmt.executeUpdate();
             LOG.debug(String.format("Новый пост успешно был добавлен в нашу БД. PublicId: %d, postId %d", 

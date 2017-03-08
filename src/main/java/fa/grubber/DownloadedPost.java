@@ -1,5 +1,8 @@
 package fa.grubber;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class DownloadedPost {
 	// Идентификатор паблика.
 	private int _publicId;
@@ -15,6 +18,9 @@ public class DownloadedPost {
 	
 	// Кол-во репостов поста.
 	private int _repostsCount;
+	
+	// Дата и время публикации поста в VK.
+	private String _postDatetime;
 
 	
 	// Геттер/сеттер PublicId
@@ -72,12 +78,37 @@ public class DownloadedPost {
 		this._repostsCount = repostsCount;
 	}
 	
-	public DownloadedPost(int publicId, int postId, String text, int likesCount, int repostsCount)
+	// Геттер/сеттер Datetime
+	public String getPostDatetime ()
 	{
-		this._publicId = publicId;
-		this._postId = postId;
-		this._text = text;
-		this._likesCount = likesCount;
-		this._repostsCount = repostsCount;
+		return this._postDatetime;
+	}
+			
+	public void setPostDatetime (String postDatetime)
+	{
+		this._postDatetime = postDatetime;
+	}
+	
+	public void setPostDatetime (int postDatetime)
+	{
+		this._postDatetime = this.convertUnixtimeToDate(postDatetime);
+	}
+	
+	// Конструктор.
+	public DownloadedPost(int publicId, int postId, String text, int likesCount, int repostsCount, int postDatetime)
+	{
+		this.setPublicId(publicId);
+		this.setPostId(postId);
+		this.setText(text);
+		this.setLikesCount(likesCount);
+		this.setRepostsCount(repostsCount);
+		this.setPostDatetime(postDatetime);
+	}
+	
+	// Метод, осуществляющий конвертацию Unix time в Date, который примет MySQL.
+	private String convertUnixtimeToDate(int unixtime)
+	{
+		java.util.Date time=new java.util.Date((long)unixtime*1000);
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
 	}
 }

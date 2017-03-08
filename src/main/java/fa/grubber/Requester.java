@@ -66,7 +66,7 @@ public class Requester {
 	{
 		if (pub == null) throw new IllegalStateException("Public is null.");
 		
-		LOG.debug(String.format("Получаем инфо о кол-ве подписчиков в группе VK. PublicId: %d", pub.getPublicId()));
+		LOG.info(String.format("Получаем инфо о кол-ве подписчиков в группе VK. PublicId: %d", pub.getPublicId()));
 		
 		try {
 			init();
