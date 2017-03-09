@@ -174,7 +174,8 @@ public class RankProcessingDBHelper {
     			post.getPostId(), 
     			rule.getRuleName()));
     	
-    	String query = "select count(1) as value from rank_processing where downloaded_post_id = ? and rule_name = ?";
+    	String query = 
+    			"select count(1) as value from rank_processing where downloaded_post_id = ? and rule_name = ? and downloaded_public_id = ?";
     	PreparedStatement stmt = null;
     	ResultSet rs = null;
     	
@@ -182,6 +183,7 @@ public class RankProcessingDBHelper {
         	stmt = con.prepareStatement(query);
         	stmt.setInt(1, post.getPostId());
         	stmt.setString(2, rule.getRuleName());
+        	stmt.setInt(3, post.getPublicId());
         	
             rs = stmt.executeQuery();
             // Если в ответе будет 1, значит такая запись есть.
@@ -222,7 +224,8 @@ public class RankProcessingDBHelper {
     			post.getPostId(),
     			rule.getRuleName()));
     	
-    	String query = "UPDATE rank_processing SET RANK = ?, TIMESTAMP = current_timestamp WHERE downloaded_post_id = ? AND rule_name = ?";
+    	String query = 
+    			"UPDATE rank_processing SET RANK = ?, TIMESTAMP = current_timestamp WHERE downloaded_post_id = ? AND rule_name = ? AND downloaded_public_id = ?";
     	PreparedStatement stmt = null;
     	
     	try {
@@ -231,6 +234,7 @@ public class RankProcessingDBHelper {
         	stmt.setInt(1, rank);
         	stmt.setInt(2, post.getPostId());
         	stmt.setString(3, rule.getRuleName());
+        	stmt.setInt(4, post.getPublicId());
         	
             stmt.executeUpdate();
             LOG.debug(String.format("Информация об оценке была успешо обновлена. PublicId: %d, postId %d, Правило: %s", 
@@ -256,7 +260,7 @@ public class RankProcessingDBHelper {
     	    			rule.getRuleName()));
  
     	String query = 
-    			"INSERT INTO rank_processing(downloaded_post_id, rule_name, rank) VALUES (?, ?, ?)";
+    			"INSERT INTO rank_processing(downloaded_post_id, rule_name, rank, downloaded_public_id) VALUES (?, ?, ?, ?)";
     	PreparedStatement stmt = null;
     	
     	try {
@@ -265,6 +269,7 @@ public class RankProcessingDBHelper {
         	stmt.setInt(1, post.getPostId());
         	stmt.setString(2, rule.getRuleName());
         	stmt.setInt(3, rank);
+        	stmt.setInt(4, post.getPublicId());
         	
             stmt.executeUpdate();
             LOG.debug(String.format("Новая запись об оценке успешно была добавлена в нашу БД. PublicId: %d, postId %d, Правило: %s", 
