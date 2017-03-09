@@ -22,6 +22,7 @@ public class Controller {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Controller.class);
 	private static DBHelper db = new DBHelper();
+	private static int timeout = Integer.valueOf(Settings.settings.get("vk_api_request_timeout"));
 	
 	public static void main(String[] args) throws InterruptedException, ApiException, ClientException  {
 		LOG.info("=== START ===");
@@ -47,7 +48,6 @@ public class Controller {
 			
 			// Записываем посты в БД.
 			db.WriteDownloadedPosts(wallPosts);
-			TimeUnit.SECONDS.sleep(1);
 
 			// Сверяем число подписчиков в БД и в VK. Если не совпадают, то обновляем в БД.
 			int subsCount = Requester.getPublicSubsCount(pub);
@@ -57,7 +57,7 @@ public class Controller {
 				db.updatePublicSubsCount(pub, subsCount);
 			}
 			
-			TimeUnit.SECONDS.sleep(5);
+			TimeUnit.SECONDS.sleep(timeout);
 			wallPosts.clear();
 		}
 	}

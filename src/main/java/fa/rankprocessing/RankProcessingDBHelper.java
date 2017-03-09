@@ -191,8 +191,8 @@ public class RankProcessingDBHelper {
             		{
             		LOG.debug(String.format("Такая запись уже есть. PublicId: %d, postId %d, Правило: %s", 
                 			post.getPublicId(), 
-                			post.getPostId()),
-                			rule.getRuleName());
+                			post.getPostId(),
+                			rule.getRuleName()));
             		return true;
             		}
             }
