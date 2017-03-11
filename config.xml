@@ -12,7 +12,7 @@
 	<vk_api_request_timeout>4</vk_api_request_timeout>
 	
 	<!-- Включение/выключение выполнения компонентов. -->
-	<is_grubber_enabled>1</is_grubber_enabled>
+	<is_grubber_enabled>0</is_grubber_enabled>
 	<is_rankprocessing_enabled>1</is_rankprocessing_enabled>
 	<is_poster_enabled>0</is_poster_enabled>
 	

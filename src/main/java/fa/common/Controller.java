@@ -16,6 +16,7 @@ import fa.grubber.DBHelper;
 import fa.grubber.Requester;
 import fa.rankprocessing.AbstractRule;
 import fa.rankprocessing.LikesCountRule;
+import fa.rankprocessing.LikesToRepostsRule;
 import fa.rankprocessing.RankProcessingDBHelper;
 
 public class Controller {
@@ -81,6 +82,10 @@ public class Controller {
 			// Правило наибольшего кол-ва лайков.
 			LikesCountRule likesCountRule = new LikesCountRule(posts, pub);
 			rules.add(likesCountRule);
+			
+			// Правило отношения лайков к репостам.
+			LikesToRepostsRule likesToRepostsRule = new LikesToRepostsRule(posts, pub);
+			rules.add(likesToRepostsRule);
 			
 			for (AbstractRule rule : rules)
 			{
