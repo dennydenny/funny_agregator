@@ -90,7 +90,6 @@ public class RankProcessingDBHelper {
             try { rs.close(); } catch(SQLException se) { /*can't do anything */ }
         }
 		return null;
-    	
     }
 
     // Метод для получения кол-ва лайков всех постов за период, указанный в _dayToAnalyse.
@@ -285,4 +284,48 @@ public class RankProcessingDBHelper {
         }
     }
 
+    // Метод, возвращающий сумму оценок для поста по всем правилам, кроме SUMMARY.
+    public int getRulesRankSumForPost (DownloadedPost post)
+    {
+    	LOG.debug(String.format("Начинаем загрузку суммы оценок для поста. PublicId: %d, PostId: %d",
+    			post.getPostId(),
+    			post.getPostId()));
+    	
+    	// Формируем запрос.
+    	String query = 
+    			"SELECT SUM(rank) as 'sum' FROM rank_processing WHERE downloaded_post_id = ? AND downloaded_public_id = ? "
+    			+ "AND rule_name != 'SUMMARY'";
+    	
+    	PreparedStatement stmt = null;
+        ResultSet rs = null;
+    	 
+        try {
+        	openConnection();
+        	stmt = con.prepareStatement(query);
+        	// Кол-во дней от текущей даты, за которое будем загружать посты.
+            stmt.setInt(1, post.getPostId());
+            stmt.setInt(2, post.getPublicId());
+            rs = stmt.executeQuery();
+            int rankSum = 0;
+ 
+            if (rs.next()) {
+            	rankSum = rs.getInt("sum");
+            }
+            
+         LOG.debug(String.format("Cумма оценок для поста успешно загружена. PublicId: %d, PostId: %d, Сумма: %d",
+        			post.getPostId(),
+        			post.getPostId(),
+        			rankSum));
+         return rankSum;
+        } 
+        catch (SQLException sqlEx) {
+            LOG.error(String.format("При загрузке суммы оценок для поста возникла ошибка: %S", sqlEx.getMessage()));
+        } 
+        finally {
+            closeConnection();
+            try { stmt.close(); } catch(SQLException se) { /*can't do anything */ }
+            try { rs.close(); } catch(SQLException se) { /*can't do anything */ }
+        }
+		return 0;
+    }
 }

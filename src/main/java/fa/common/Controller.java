@@ -18,6 +18,7 @@ import fa.rankprocessing.AbstractRule;
 import fa.rankprocessing.LikesCountRule;
 import fa.rankprocessing.LikesToRepostsRule;
 import fa.rankprocessing.RankProcessingDBHelper;
+import fa.rankprocessing.Summarizer;
 
 public class Controller {
 
@@ -84,8 +85,12 @@ public class Controller {
 			rules.add(likesCountRule);
 			
 			// Правило отношения лайков к репостам.
-			LikesToRepostsRule likesToRepostsRule = new LikesToRepostsRule(posts, pub);
+			LikesToRepostsRule likesToRepostsRule = new LikesToRepostsRule(posts);
 			rules.add(likesToRepostsRule);
+			
+			// Суммирование (в самую последнюю очередь).
+			Summarizer sum = new Summarizer(posts);
+			rules.add(sum);
 			
 			for (AbstractRule rule : rules)
 			{

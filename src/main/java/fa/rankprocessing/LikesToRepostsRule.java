@@ -8,14 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fa.common.DownloadedPost;
-import fa.common.Public;
 
 public class LikesToRepostsRule extends AbstractRule {
 	
 	private List <DownloadedPost> _posts;
 	private static final Logger LOG = LoggerFactory.getLogger(LikesToRepostsRule.class);
 	private final String _ruleName = "Отношение_лайков_к_репостам";
-	private final Public _pub;
 
 	@Override
 	public void executeRanking() {
@@ -32,7 +30,7 @@ public class LikesToRepostsRule extends AbstractRule {
 				float value = (float) post.getRepostsCount()/post.getLikesCount();
 				int rank = this.rankPostByR2L(value);
 				
-				System.out.println(String.format("Пост: %d, паблик: %d, отношение: %s, оценка: %s",
+				LOG.debug(String.format("Пост: %d, паблик: %d, value: %s, оценка: %s",
 						post.getPostId(),
 						post.getPublicId(),
 						String.valueOf(value),
@@ -48,7 +46,6 @@ public class LikesToRepostsRule extends AbstractRule {
 					e.getMessage()));
 			e.printStackTrace();
 		}	
-
 	}
 
 	@Override
@@ -56,7 +53,7 @@ public class LikesToRepostsRule extends AbstractRule {
 		return _ruleName;
 	}
 
-	public LikesToRepostsRule (List<DownloadedPost> posts, Public pub)
+	public LikesToRepostsRule (List<DownloadedPost> posts)
 	{
 		if (!posts.isEmpty() && posts != null) 
 		{
@@ -65,15 +62,6 @@ public class LikesToRepostsRule extends AbstractRule {
 		else
 		{
 			throw new IllegalStateException("Список постов пуст.");
-		}
-		
-		if (pub != null) 
-		{
-			this._pub = pub;
-		}
-		else
-		{
-			throw new IllegalStateException("Передан пустой паблик.");
 		}
 	}
 
@@ -94,5 +82,4 @@ public class LikesToRepostsRule extends AbstractRule {
 		
 		return rank;
 	}
-
 }
