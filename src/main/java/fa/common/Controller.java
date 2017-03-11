@@ -14,6 +14,7 @@ import com.vk.api.sdk.objects.wall.WallpostFull;
 
 import fa.grubber.DBHelper;
 import fa.grubber.Requester;
+import fa.poster.PosterDBHelper;
 import fa.rankprocessing.AbstractRule;
 import fa.rankprocessing.AudienceInvolvementRule;
 import fa.rankprocessing.LikesCountRule;
@@ -103,5 +104,18 @@ public class Controller {
 			}
 			posts.clear();			
 		}
+	}
+
+	// Запуск постера.
+	private static void runPoster()
+	{
+		PosterDBHelper pdb = new PosterDBHelper();
+		List<DownloadedPost> posts = pdb.getPostsForPosting();
+		
+		if (!posts.isEmpty())
+		{
+			posts.get(0);
+		}
+		
 	}
 }

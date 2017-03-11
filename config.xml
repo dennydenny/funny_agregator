@@ -18,4 +18,5 @@
 	
 	<!-- Кол-во дней для анализа и оценки -->
 	<day_to_analyse>14</day_to_analyse>
+	<reposts_count_limit>2</reposts_count_limit>
 </configuration>

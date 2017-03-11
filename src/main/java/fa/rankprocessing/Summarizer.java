@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fa.common.DownloadedPost;
-import fa.common.Public;
 
 public class Summarizer extends AbstractRule {
 	
