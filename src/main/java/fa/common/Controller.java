@@ -15,6 +15,7 @@ import com.vk.api.sdk.objects.wall.WallpostFull;
 import fa.grubber.DBHelper;
 import fa.grubber.Requester;
 import fa.rankprocessing.AbstractRule;
+import fa.rankprocessing.AudienceInvolvementRule;
 import fa.rankprocessing.LikesCountRule;
 import fa.rankprocessing.LikesToRepostsRule;
 import fa.rankprocessing.RankProcessingDBHelper;
@@ -79,7 +80,7 @@ public class Controller {
 		for (Public pub : publics)
 		{
 			posts = rpdb.getPostsForRanking(pub);
-			
+			/*
 			// Правило наибольшего кол-ва лайков.
 			LikesCountRule likesCountRule = new LikesCountRule(posts, pub);
 			rules.add(likesCountRule);
@@ -87,11 +88,15 @@ public class Controller {
 			// Правило отношения лайков к репостам.
 			LikesToRepostsRule likesToRepostsRule = new LikesToRepostsRule(posts);
 			rules.add(likesToRepostsRule);
+			*/
+			// Правило вовлеченности аудитории.
+			AudienceInvolvementRule invRule = new AudienceInvolvementRule(posts, pub);
+			rules.add(invRule);
 			
 			// Суммирование (в самую последнюю очередь).
 			Summarizer sum = new Summarizer(posts);
 			rules.add(sum);
-			
+						
 			for (AbstractRule rule : rules)
 			{
 				rule.executeRanking();
