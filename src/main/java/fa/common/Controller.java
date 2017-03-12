@@ -13,7 +13,6 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.wall.WallpostFull;
 
 import fa.grubber.DBHelper;
-import fa.grubber.Requester;
 import fa.poster.PosterDBHelper;
 import fa.rankprocessing.AbstractRule;
 import fa.rankprocessing.AudienceInvolvementRule;
@@ -33,6 +32,7 @@ public class Controller {
 		
 		if (Integer.valueOf(Settings.settings.get("is_grubber_enabled")) == 1) runGrubber();
 		if (Integer.valueOf(Settings.settings.get("is_rankprocessing_enabled")) == 1) runRankProcessing();
+		if (Integer.valueOf(Settings.settings.get("is_poster_enabled")) == 1) runPoster();
 		
 		LOG.info("=== END ===");	
 	}
@@ -109,13 +109,15 @@ public class Controller {
 	// Запуск постера.
 	private static void runPoster()
 	{
+		//Requester.repostPostToPublic(null);
 		PosterDBHelper pdb = new PosterDBHelper();
+		
+		// Выбор постов, которые можно публиковать.
 		List<DownloadedPost> posts = pdb.getPostsForPosting();
 		
 		if (!posts.isEmpty())
 		{
-			posts.get(0);
+			Requester.repostPostToPublic(posts.get(0));
 		}
-		
 	}
 }

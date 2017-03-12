@@ -121,4 +121,13 @@ public class DownloadedPost {
 		java.util.Date time=new java.util.Date((long)unixtime*1000);
 		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
 	}
+
+	// Метод, возвращающий пост в таком виде, который подходит для репоста через SDK.
+	public String ToRepostObject()
+	{
+		StringBuilder sb = new StringBuilder("wall-");
+		sb.append(this.getPublicId());
+		sb.append("_" + this.getPostId());
+		return sb.toString();
+	}
 }

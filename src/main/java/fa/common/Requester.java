@@ -1,4 +1,4 @@
-package fa.grubber;
+package fa.common;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,14 +13,15 @@ import com.vk.api.sdk.exceptions.ApiAuthException;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
+import com.vk.api.sdk.objects.base.responses.OkResponse;
 import com.vk.api.sdk.objects.groups.GroupFull;
 import com.vk.api.sdk.objects.wall.WallpostFull;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
+import com.vk.api.sdk.objects.wall.responses.RepostResponse;
 import com.vk.api.sdk.queries.groups.GroupField;
 import com.vk.api.sdk.queries.wall.WallGetFilter;
 
-import fa.common.Public;
-import fa.common.Settings;
+import fa.grubber.VKAuthorization;
 
 public class Requester {
 	
@@ -95,5 +96,26 @@ public class Requester {
 			LOG.error(String.format("При получении кол-ва подписчиков паблика VK возникла ошибка %S", e.getMessage()));
 		}
 		return 0;
+	}
+
+	public static void repostPostToPublic (DownloadedPost post)
+	{
+		// Формируем объект для репоста (wall-[паблик]_[id поста).
+		String repostObject;
+		try {
+			init();
+			RepostResponse resp = vk.wall().repost(actor, "wall-79525017_76401")
+					.groupId(142345776)
+					.execute();
+			OkResponse ok = resp.getSuccess();
+			if (ok.getValue() == 1)
+			{
+				System.out.println("Всё нормас");
+			}
+		}
+		catch (Exception e)
+		{
+			LOG.error("Ошибка при репосте поста на стену" + e.getMessage());
+		}	
 	}
 }
