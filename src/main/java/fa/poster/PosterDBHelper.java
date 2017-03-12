@@ -109,4 +109,66 @@ public class PosterDBHelper {
         }
 		return null;
     }
+
+    // Метод, записывающий информацию о репосте.
+    public void insertRepostInfo (DownloadedPost post)
+    {
+    	LOG.debug(String.format("Записываем информацию о репосте в БД. PostId: %d, PublicId: %d", 
+    			post.getPostId(),
+    			post.getPublicId()));
+    	openConnection();
+    	
+    	if (this.isReposted(post))
+    	{
+    		
+    	}
+    	
+    	
+    }
+    
+    // Метод, проверяющий, есть ли запись о репосте в БД.
+    private boolean isReposted (DownloadedPost post)
+    {
+    	LOG.debug(String.format("Проверяем, есть ли запись о репосте поста. PublicId: %d, postId %d.", 
+    			post.getPublicId(), 
+    			post.getPostId()));
+    	
+    	String query = 
+    			"select count(1) as value from reposted_posts where downloaded_post_id = ? and downloaded_public_id = ?";
+    	PreparedStatement stmt = null;
+    	ResultSet rs = null;
+    	
+        try {
+        	stmt = con.prepareStatement(query);
+        	stmt.setInt(1, post.getPostId());
+        	stmt.setInt(2, post.getPublicId());
+        	
+            rs = stmt.executeQuery();
+            // Если в ответе будет 1, значит такая запись есть.
+            if (rs.next()) {
+            	
+            	if (rs.getInt("value") == 1) 
+            		{
+            		LOG.debug(String.format("Запись о репосте уже есть. PublicId: %d, postId %d.", 
+                			post.getPublicId(), 
+                			post.getPostId()));
+            		return true;
+            		}
+            }
+            else
+            {
+            	LOG.debug(String.format("Записи о репосте ещё нет. PublicId: %d, postId %d.", 
+            			post.getPublicId(), 
+            			post.getPostId()));
+            	return false;
+            }
+        } 
+        catch (SQLException sqlEx) {
+            LOG.error(String.format("При проверке наличия записи о репосте в БД возникла ошибка: %S", sqlEx.getMessage()));
+        } 
+        finally {
+            try { stmt.close(); } catch(SQLException se) { /*can't do anything */ }
+        }
+		return false;
+    }
 }

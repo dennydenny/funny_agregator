@@ -29,6 +29,7 @@ public class Requester {
 	private static VkApiClient vk;
 	private static UserActor actor;
 	private static final Logger LOG = LoggerFactory.getLogger(Requester.class);
+	private static final int _ourPublicId = Integer.valueOf(Settings.settings.get("our_public_id"));
 	
 	private static void init() throws ApiAuthException
 	{
@@ -100,17 +101,23 @@ public class Requester {
 
 	public static void repostPostToPublic (DownloadedPost post)
 	{
-		// Формируем объект для репоста (wall-[паблик]_[id поста).
-		String repostObject;
 		try {
 			init();
-			RepostResponse resp = vk.wall().repost(actor, "wall-79525017_76401")
-					.groupId(142345776)
+			RepostResponse resp = vk.wall().repost(actor, post.ToRepostObject())
+					.groupId(_ourPublicId)
 					.execute();
 			OkResponse ok = resp.getSuccess();
 			if (ok.getValue() == 1)
 			{
-				System.out.println("Всё нормас");
+				LOG.info(String.format("Пост успешно опубликован. PostId: %d, PublicId: %d.", 
+            			post.getPostId(),
+            			post.getPublicId()));
+			}
+			else
+			{
+				LOG.warn(String.format("Отсутствует информация об успешной публикации поста. PostId: %d, PublicId: %d.", 
+            			post.getPostId(),
+            			post.getPublicId()));	
 			}
 		}
 		catch (Exception e)
