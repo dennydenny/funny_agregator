@@ -112,12 +112,24 @@ public class Controller {
 		//Requester.repostPostToPublic(null);
 		PosterDBHelper pdb = new PosterDBHelper();
 		
-		// Выбор постов, которые можно публиковать.
-		List<DownloadedPost> posts = pdb.getPostsForPosting();
-		
-		if (!posts.isEmpty())
+		if (pdb.isRepostAllowNow())
 		{
-			Requester.repostPostToPublic(posts.get(0));
+			LOG.info("Репост разрешён. Продолжаем работу.");
+			// Выбор постов, которые можно публиковать.
+			List<DownloadedPost> posts = pdb.getPostsForPosting();
+			
+			if (!posts.isEmpty())
+			{
+				DownloadedPost post = posts.get(0);
+				// Осуществляем репост записи на стену паблика.
+				Requester.repostPostToPublic(post);
+				// Записываем в БД инфо о репосте.
+				pdb.insertRepostInfo(post);
+			}		
 		}
+		else
+		{
+			LOG.info("Репост запрещён. Poster завершает свою работу.");	
+		}	
 	}
 }
