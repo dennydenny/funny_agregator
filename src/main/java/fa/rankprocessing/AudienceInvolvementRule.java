@@ -31,7 +31,7 @@ public class AudienceInvolvementRule extends AbstractRule {
 			{
 				float value = (((float)post.getLikesCount() + post.getRepostsCount())/_pub.getPublicSubsCount());
 				value = value * 100;
-				System.out.println(post.getPostId() + " " + value + " ");
+
 				int rank = this.rankPostByInvolvement(value);
 				LOG.debug(String.format("Пост: %d, паблик: %d, value: %s, оценка: %s",
 						post.getPostId(),

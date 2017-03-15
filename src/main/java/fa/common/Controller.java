@@ -81,7 +81,7 @@ public class Controller {
 		for (Public pub : publics)
 		{
 			posts = rpdb.getPostsForRanking(pub);
-			/*
+			
 			// Правило наибольшего кол-ва лайков.
 			LikesCountRule likesCountRule = new LikesCountRule(posts, pub);
 			rules.add(likesCountRule);
@@ -89,7 +89,7 @@ public class Controller {
 			// Правило отношения лайков к репостам.
 			LikesToRepostsRule likesToRepostsRule = new LikesToRepostsRule(posts);
 			rules.add(likesToRepostsRule);
-			*/
+			
 			// Правило вовлеченности аудитории.
 			AudienceInvolvementRule invRule = new AudienceInvolvementRule(posts, pub);
 			rules.add(invRule);
@@ -121,8 +121,10 @@ public class Controller {
 			if (!posts.isEmpty())
 			{
 				DownloadedPost post = posts.get(0);
+				LOG.info("Репостим запись на стену...");	
 				// Осуществляем репост записи на стену паблика.
 				Requester.repostPostToPublic(post);
+				LOG.info("Записываем информацию о репосте в БД.");	
 				// Записываем в БД инфо о репосте.
 				pdb.insertRepostInfo(post);
 			}		

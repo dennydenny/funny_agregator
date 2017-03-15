@@ -23,11 +23,15 @@
 	
 	<!-- Включение/выключение выполнения компонентов. -->
 	<is_grubber_enabled>1</is_grubber_enabled>
-	<is_rankprocessing_enabled>0</is_rankprocessing_enabled>
+	<is_rankprocessing_enabled>1</is_rankprocessing_enabled>
 	<is_poster_enabled>1</is_poster_enabled>
 	
 	<!-- Кол-во дней для анализа и оценки -->
 	<day_to_analyse>14</day_to_analyse>
+	<!-- Максимальное кол-во публикаций одной и той же записи. -->
 	<reposts_count_limit>2</reposts_count_limit>
+	<!-- Кол-во часов между двумя возможными репостами. -->
 	<hours_after_last_repost>2</hours_after_last_repost>
+	<!-- Кол-во дней, через которое разрешается повторный репост публикации. -->
+	<day_after_last_duplicate>7</day_after_last_duplicate>
 </configuration>

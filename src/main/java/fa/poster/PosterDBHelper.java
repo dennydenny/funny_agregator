@@ -28,6 +28,8 @@ public class PosterDBHelper {
     private static final int _repostsLimit = Integer.valueOf(Settings.settings.get("reposts_count_limit"));
     // Минимальное расстояние между двумя репостами.
     private static final int _hoursAfterLastRepost = Integer.valueOf(Settings.settings.get("hours_after_last_repost"));
+    private static final int _dayAfterLastDuplicate = Integer.valueOf(Settings.settings.get("day_after_last_duplicate"));
+
  
     private static Connection con;
     
@@ -72,10 +74,11 @@ public class PosterDBHelper {
     			+ "FROM downloaded_posts dp, rank_processing rp "
     			+ "WHERE dp.post_id=rp.downloaded_post_id AND "
     			+ "dp.public_id=rp.downloaded_public_id AND "
-    			+ "rp.rule_name='SUMMARY'AND "
+    			+ "rp.rule_name='SUMMARY' AND "
     			+ "dp.post_datetime >= (NOW() - INTERVAL ? DAY) AND "
-    			+ "dp.post_id NOT IN (select downloaded_post_id FROM reposted_posts WHERE count < ?)"
-    			+ "order by rp.rank desc";
+    			+ "dp.post_id NOT IN "
+    			+ "(select downloaded_post_id FROM reposted_posts WHERE count >= ? OR TIMESTAMP >= NOW() - INTERVAL ? DAY )"
+    			+ "ORDER BY rp.rank DESC";
     	ArrayList<DownloadedPost> list = new ArrayList<DownloadedPost> ();
     	PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -85,7 +88,8 @@ public class PosterDBHelper {
         	stmt = con.prepareStatement(query);
         	// Кол-во дней от текущей даты, за которое будем загружать посты.
             stmt.setInt(1, _dayToAnalyse);
-            stmt.setInt(1, _repostsLimit);
+            stmt.setInt(2, _repostsLimit);
+            stmt.setInt(3, _dayAfterLastDuplicate);
             rs = stmt.executeQuery();
  
             while (rs.next()) {
@@ -104,7 +108,10 @@ public class PosterDBHelper {
          return list;
         } 
         catch (SQLException sqlEx) {
-            LOG.error(String.format("При загрузке списка постов для постинга возникла ошибка: %S", sqlEx.getMessage()));
+            LOG.error(String.format("При загрузке списка постов для постинга возникла ошибка на уровне БД: %S", sqlEx.getMessage()));
+        }
+        catch (Exception e) {
+            LOG.error(String.format("При загрузке списка постов для постинга возникла ошибка: %S", e.getMessage()));
         } 
         finally {
             closeConnection();
