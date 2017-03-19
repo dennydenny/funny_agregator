@@ -17,6 +17,16 @@ repositories {
     jcenter()
 }
 
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'fa.common.Controller'
+    }
+    baseName = 'free_agregator'
+    version =  '1.0'
+}
+
+
 // In this section you declare the dependencies for your production and test code
 dependencies {
     // The production code uses the SLF4J logging API at compile time

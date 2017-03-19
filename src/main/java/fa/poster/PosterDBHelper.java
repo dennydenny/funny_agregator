@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fa.common.DownloadedPost;
-import fa.common.Public;
 import fa.common.Settings;
 
 public class PosterDBHelper {
@@ -77,8 +75,9 @@ public class PosterDBHelper {
     			+ "rp.rule_name='SUMMARY' AND "
     			+ "dp.post_datetime >= (NOW() - INTERVAL ? DAY) AND "
     			+ "dp.post_id NOT IN "
-    			+ "(select downloaded_post_id FROM reposted_posts WHERE count >= ? OR TIMESTAMP >= NOW() - INTERVAL ? DAY )"
-    			+ "ORDER BY rp.rank DESC";
+    			+ "(select downloaded_post_id FROM reposted_posts WHERE count >= ? OR TIMESTAMP >= NOW() - INTERVAL ? DAY) AND"
+    			+ "dp.public_id NOT IN (SELECT downloaded_public_id FROM reposted_posts ORDER BY TIMESTAMP DESC LIMIT 1)"
+    			+ "ORDER BY dp.rank DESC";
     	ArrayList<DownloadedPost> list = new ArrayList<DownloadedPost> ();
     	PreparedStatement stmt = null;
         ResultSet rs = null;

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Hashtable;
 import java.util.Map;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -24,7 +23,9 @@ public class XMLParser {
 		settings = new Hashtable<String, String>();
 		
 	    try {
-	    	File file = new File("config.xml");
+	    	ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+	    	//File file = new File(classLoader.getResource("./config.xml").getFile());
+	    	File file = new File("./config.xml");
 	    	DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance()
 	                             .newDocumentBuilder();
 	    	Document doc = dBuilder.parse(file);
