@@ -23,7 +23,7 @@ public class XMLParser {
 		settings = new Hashtable<String, String>();
 		
 	    try {
-	    	ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+	    	//ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 	    	//File file = new File(classLoader.getResource("./config.xml").getFile());
 	    	File file = new File("./config.xml");
 	    	DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance()
