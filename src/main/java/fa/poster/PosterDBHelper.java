@@ -26,7 +26,8 @@ public class PosterDBHelper {
     private static final int _repostsLimit = Integer.valueOf(Settings.settings.get("reposts_count_limit"));
     // ћинимальное рассто€ние между двум€ репостами.
     private static final int _hoursAfterLastRepost = Integer.valueOf(Settings.settings.get("hours_after_last_repost"));
-    private static final int _dayAfterLastDuplicate = Integer.valueOf(Settings.settings.get("day_after_last_duplicate"));
+    private static final int _dayAfterLastDuplicate = Integer.valueOf(Settings.settings.get("day_after_last_duplicate")); 
+    private static final int _excludePublicInterval = Integer.valueOf(Settings.settings.get("exclude_public_interval"));
 
  
     private static Connection con;
@@ -76,8 +77,8 @@ public class PosterDBHelper {
     			+ "dp.post_datetime >= (NOW() - INTERVAL ? DAY) AND "
     			+ "dp.post_id NOT IN "
     			+ "(select downloaded_post_id FROM reposted_posts WHERE count >= ? OR TIMESTAMP >= NOW() - INTERVAL ? DAY) AND "
-    			+ "dp.public_id NOT IN (SELECT downloaded_public_id FROM reposted_posts ORDER BY TIMESTAMP DESC LIMIT 1) "
-    			+ "ORDER BY dp.rank DESC";
+    			+ "dp.public_id NOT IN (SELECT DISTINCT downloaded_public_id FROM reposted_posts WHERE TIMESTAMP >= NOW() - INTERVAL ? HOUR) "
+    			+ "ORDER BY rp.rank DESC";
     	ArrayList<DownloadedPost> list = new ArrayList<DownloadedPost> ();
     	PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -89,6 +90,7 @@ public class PosterDBHelper {
             stmt.setInt(1, _dayToAnalyse);
             stmt.setInt(2, _repostsLimit);
             stmt.setInt(3, _dayAfterLastDuplicate);
+            stmt.setInt(4, _excludePublicInterval);
             rs = stmt.executeQuery();
  
             while (rs.next()) {

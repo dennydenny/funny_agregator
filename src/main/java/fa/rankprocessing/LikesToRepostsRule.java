@@ -30,7 +30,7 @@ public class LikesToRepostsRule extends AbstractRule {
 				float value = (float) post.getRepostsCount()/post.getLikesCount();
 				int rank = this.rankPostByR2L(value);
 				
-				LOG.debug(String.format("Пост: %d, паблик: %d, value: %s, оценка: %s",
+				LOG.info(String.format("Пост: %d, паблик: %d, value: %s, оценка: %s",
 						post.getPostId(),
 						post.getPublicId(),
 						String.valueOf(value),

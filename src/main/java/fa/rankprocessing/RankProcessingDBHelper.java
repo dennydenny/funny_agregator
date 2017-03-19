@@ -146,7 +146,7 @@ public class RankProcessingDBHelper {
     		
     		if (this.isRankRecordExist(post, rule))
     		{
-    			LOG.info(String.format("Запись об оценке уже есть. Обновляем оценку. PublicId: %d, postId %d, Правило: %s", 
+    			LOG.debug(String.format("Запись об оценке уже есть. Обновляем оценку. PublicId: %d, postId %d, Правило: %s", 
     	    			post.getPublicId(), 
     	    			post.getPostId(),
     	    			rule.getRuleName()));

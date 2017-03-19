@@ -33,7 +33,7 @@ public class AudienceInvolvementRule extends AbstractRule {
 				value = value * 100;
 
 				int rank = this.rankPostByInvolvement(value);
-				LOG.debug(String.format("Пост: %d, паблик: %d, value: %s, оценка: %s",
+				LOG.info(String.format("Пост: %d, паблик: %d, value: %s, оценка: %s",
 						post.getPostId(),
 						post.getPublicId(),
 						String.valueOf(value),

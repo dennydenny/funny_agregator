@@ -35,7 +35,7 @@ public class LikesCountRule extends AbstractRule {
 				float value = (float) post.getLikesCount()/likes;
 				value = value * 100;
 				int rank = this.rankPostByLikes(value);
-				LOG.debug(String.format("Пост: %d, паблик: %d, value: %s, оценка: %s",
+				LOG.info(String.format("Пост: %d, паблик: %d, value: %s, оценка: %s",
 						post.getPostId(),
 						post.getPublicId(),
 						String.valueOf(value),
