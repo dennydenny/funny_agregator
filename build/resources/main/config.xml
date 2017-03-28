@@ -22,8 +22,8 @@
 	<our_public_id>142345776</our_public_id>
 	
 	<!-- Включение/выключение выполнения компонентов. -->
-	<is_grubber_enabled>1</is_grubber_enabled>
-	<is_rankprocessing_enabled>1</is_rankprocessing_enabled>
+	<is_grubber_enabled>0</is_grubber_enabled>
+	<is_rankprocessing_enabled>0</is_rankprocessing_enabled>
 	<is_poster_enabled>1</is_poster_enabled>
 	
 	<!-- Кол-во дней для анализа и оценки -->
@@ -34,4 +34,6 @@
 	<hours_after_last_repost>2</hours_after_last_repost>
 	<!-- Кол-во дней, через которое разрешается повторный репост публикации. -->
 	<day_after_last_duplicate>7</day_after_last_duplicate>
+	<!-- Период после репоста, на который паблик "исключается" для повторной публикации -->
+	<exclude_public_interval>6</exclude_public_interval>
 </configuration>

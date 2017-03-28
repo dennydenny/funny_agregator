@@ -25,7 +25,6 @@ public class Controller {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Controller.class);
 	private static DBHelper db = new DBHelper();
-	private static int timeout = Integer.valueOf(Settings.settings.get("vk_api_request_timeout"));
 	
 	public static void main(String[] args) throws InterruptedException, ApiException, ClientException  {
 		LOG.info("=== START ===");
@@ -39,7 +38,8 @@ public class Controller {
 	
 	// Запуск граббера.
 	private static void runGrubber() throws InterruptedException, ApiException, ClientException
-	{		
+	{	
+		int timeout = Integer.valueOf(Settings.settings.get("vk_api_request_timeout"));
 		// Получаем список пабликов.
 		ArrayList<Public> publics = db.getPublics();
 		

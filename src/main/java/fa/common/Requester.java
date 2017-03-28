@@ -57,7 +57,7 @@ public class Requester {
 			return list;
 		}
 		catch (ApiAuthException apiAuthException) {
-			LOG.error("Ошибка API при запросе постов со стены" + apiAuthException.getMessage());
+			LOG.error("Ошибка API при запросе постов со стены " + apiAuthException.getMessage() + " " + apiAuthException.hashCode());
 		}
 		catch (Exception e) {
 			LOG.error("Ошибка при запросе постов со стены" + e.getMessage());
@@ -93,7 +93,11 @@ public class Requester {
 			}
 			else LOG.error(String.format("Не удалось получить число подписчиков группы. PublicId: %d", pub.getPublicId()));
 			
-		} catch (Exception e) {
+		}
+		catch (ApiAuthException apiAuthException) {
+			LOG.error("Ошибка API при получении кол-ва подписчиков паблика VK " + apiAuthException.getMessage() + " " + apiAuthException.hashCode());
+		}
+		catch (Exception e) {
 			LOG.error(String.format("При получении кол-ва подписчиков паблика VK возникла ошибка %S", e.getMessage()));
 		}
 		return 0;
@@ -119,6 +123,9 @@ public class Requester {
             			post.getPostId(),
             			post.getPublicId()));	
 			}
+		}
+		catch (ApiAuthException apiAuthException) {
+			LOG.error("Ошибка API при репосте поста на стену " + apiAuthException.getMessage() + " " + apiAuthException.hashCode());
 		}
 		catch (Exception e)
 		{
