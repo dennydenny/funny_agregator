@@ -10,6 +10,7 @@ import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiAuthException;
+import com.vk.api.sdk.exceptions.ApiAuthValidationException;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
@@ -56,8 +57,8 @@ public class Requester {
 			LOG.debug((String.format("Запрос постов со стены выполнен успешно. Паблик %s", pub.getPublicName())));
 			return list;
 		}
-		catch (ApiAuthException apiAuthException) {
-			LOG.error("Ошибка API при запросе постов со стены " + apiAuthException.getMessage() + " " + apiAuthException.hashCode());
+		catch (ApiAuthValidationException apiAuthValidationException) {
+			LOG.error("Ошибка валидации API при запросе постов со стены " + apiAuthValidationException.getMessage() + " " + apiAuthValidationException.hashCode());
 		}
 		catch (Exception e) {
 			LOG.error("Ошибка при запросе постов со стены" + e.getMessage());

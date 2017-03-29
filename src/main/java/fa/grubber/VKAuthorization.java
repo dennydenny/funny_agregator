@@ -7,6 +7,7 @@ import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiAuthException;
+import com.vk.api.sdk.exceptions.ApiAuthValidationException;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
@@ -65,11 +66,19 @@ public class VKAuthorization {
 				LOG.debug("Статус пользователя: " + st.getText());
 				return true;
 			}
-		} catch (ApiException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (ApiAuthValidationException apiAuthValidationException) {
+			LOG.error("Ошибка валидации API при проверке валидности токена " 
+					+ apiAuthValidationException.getMessage() 
+					+ " " 
+					+ apiAuthValidationException.getRedirectUri());
+			return false;
+		} 
+		catch (ApiException e) {
 			e.printStackTrace();
 			return false;
-		} catch (ClientException e) {
+		} 
+		catch (ClientException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;

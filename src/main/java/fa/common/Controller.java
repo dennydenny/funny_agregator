@@ -80,29 +80,41 @@ public class Controller {
 		
 		for (Public pub : publics)
 		{
-			posts = rpdb.getPostsForRanking(pub);
-			
-			// Правило наибольшего кол-ва лайков.
-			LikesCountRule likesCountRule = new LikesCountRule(posts, pub);
-			rules.add(likesCountRule);
-			
-			// Правило отношения лайков к репостам.
-			LikesToRepostsRule likesToRepostsRule = new LikesToRepostsRule(posts);
-			rules.add(likesToRepostsRule);
-			
-			// Правило вовлеченности аудитории.
-			AudienceInvolvementRule invRule = new AudienceInvolvementRule(posts, pub);
-			rules.add(invRule);
-			
-			// Суммирование (в самую последнюю очередь).
-			Summarizer sum = new Summarizer(posts);
-			rules.add(sum);
-						
-			for (AbstractRule rule : rules)
-			{
-				rule.executeRanking();
+			try {
+				posts = rpdb.getPostsForRanking(pub);
+				
+				// Правило наибольшего кол-ва лайков.
+				LikesCountRule likesCountRule = new LikesCountRule(posts, pub);
+				rules.add(likesCountRule);
+				
+				// Правило отношения лайков к репостам.
+				LikesToRepostsRule likesToRepostsRule = new LikesToRepostsRule(posts);
+				rules.add(likesToRepostsRule);
+				
+				// Правило вовлеченности аудитории.
+				AudienceInvolvementRule invRule = new AudienceInvolvementRule(posts, pub);
+				rules.add(invRule);
+				
+				// Суммирование (в самую последнюю очередь).
+				Summarizer sum = new Summarizer(posts);
+				rules.add(sum);
+							
+				for (AbstractRule rule : rules)
+				{
+					rule.executeRanking();
+				}
+				posts.clear();	
 			}
-			posts.clear();			
+			catch (IllegalStateException e)
+			{
+				LOG.warn(e.getMessage());
+				LOG.warn(String.valueOf(e.getStackTrace()));
+			}
+			catch (Exception e)
+			{
+				LOG.error(e.getMessage());
+				LOG.error(String.valueOf(e.getStackTrace()));
+			}
 		}
 	}
 
