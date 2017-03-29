@@ -133,12 +133,14 @@ public class Controller {
 			if (!posts.isEmpty())
 			{
 				DownloadedPost post = posts.get(0);
-				LOG.info("Репостим запись на стену...");	
+				LOG.info(String.format("Репостим запись на стену. Пост: %d, паблик: %d",
+						post.getPostId(),
+						post.getPublicId()));			
+				// Записываем в БД инфо о репосте.
+				pdb.insertRepostInfo(post);
 				// Осуществляем репост записи на стену паблика.
 				Requester.repostPostToPublic(post);
 				LOG.info("Записываем информацию о репосте в БД.");	
-				// Записываем в БД инфо о репосте.
-				pdb.insertRepostInfo(post);
 			}		
 		}
 		else
