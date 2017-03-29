@@ -88,9 +88,7 @@ public class PosterDBHelper {
         	stmt = con.prepareStatement(query);
         	// Кол-во дней от текущей даты, за которое будем загружать посты.
             stmt.setInt(1, _dayToAnalyse);
-            stmt.setInt(2, _repostsLimit);
-            stmt.setInt(3, _dayAfterLastDuplicate);
-            stmt.setInt(4, _excludePublicInterval);
+            stmt.setInt(2, _excludePublicInterval);
             rs = stmt.executeQuery();
  
             while (rs.next()) {
