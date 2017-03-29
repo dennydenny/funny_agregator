@@ -76,7 +76,7 @@ public class PosterDBHelper {
     			+ "rp.rule_name='SUMMARY' AND "
     			+ "dp.post_datetime >= (NOW() - INTERVAL ? DAY) AND "
     			+ "dp.post_id NOT IN "
-    			+ "(select downloaded_post_id FROM reposted_posts WHERE count >= ? OR TIMESTAMP >= NOW() - INTERVAL ? DAY) AND "
+    			+ "(select downloaded_post_id FROM reposted_posts "
     			+ "dp.public_id NOT IN (SELECT DISTINCT downloaded_public_id FROM reposted_posts WHERE TIMESTAMP >= NOW() - INTERVAL ? HOUR) "
     			+ "ORDER BY rp.rank DESC";
     	ArrayList<DownloadedPost> list = new ArrayList<DownloadedPost> ();
