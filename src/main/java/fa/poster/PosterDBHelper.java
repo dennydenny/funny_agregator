@@ -22,11 +22,8 @@ public class PosterDBHelper {
     private static final Logger LOG = LoggerFactory.getLogger(PosterDBHelper.class);
     //  ол-во дней от текущего времени, за которые проводитс€ оценка.
     private static final int _dayToAnalyse = Integer.valueOf(Settings.settings.get("day_to_analyse"));
-    // Ћимит на кол-во репостов одной записи на стену.
-    private static final int _repostsLimit = Integer.valueOf(Settings.settings.get("reposts_count_limit"));
     // ћинимальное рассто€ние между двум€ репостами.
     private static final int _hoursAfterLastRepost = Integer.valueOf(Settings.settings.get("hours_after_last_repost"));
-    private static final int _dayAfterLastDuplicate = Integer.valueOf(Settings.settings.get("day_after_last_duplicate")); 
     private static final int _excludePublicInterval = Integer.valueOf(Settings.settings.get("exclude_public_interval"));
 
  
@@ -76,7 +73,7 @@ public class PosterDBHelper {
     			+ "rp.rule_name='SUMMARY' AND "
     			+ "dp.post_datetime >= (NOW() - INTERVAL ? DAY) AND "
     			+ "dp.post_id NOT IN "
-    			+ "(select downloaded_post_id FROM reposted_posts "
+    			+ "(select downloaded_post_id FROM reposted_posts) AND "
     			+ "dp.public_id NOT IN (SELECT DISTINCT downloaded_public_id FROM reposted_posts WHERE TIMESTAMP >= NOW() - INTERVAL ? HOUR) "
     			+ "ORDER BY rp.rank DESC";
     	ArrayList<DownloadedPost> list = new ArrayList<DownloadedPost> ();
