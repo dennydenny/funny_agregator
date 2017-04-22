@@ -21,6 +21,7 @@ public class VKAuthorization {
 	private static UserActor _actor;
 	private final static int _userId = Integer.valueOf(Settings.settings.get("user_id"));
 	private static final Logger LOG = LoggerFactory.getLogger(VKAuthorization.class);
+	private static boolean isValid = false;
 	
 	/*
 	 * Публичный метод, возвращающий Actor VK
@@ -50,6 +51,7 @@ public class VKAuthorization {
 	private static boolean isCurrentTokenValid ()
 	{
 		LOG.debug("Проверяем валидность текущего токена...");
+		if (isValid) return true;
 		TransportClient transportClient = HttpTransportClient.getInstance(); 
 		VkApiClient vk = new VkApiClient(transportClient); 
 		com.vk.api.sdk.objects.status.Status st;
@@ -64,6 +66,7 @@ public class VKAuthorization {
 			{
 				LOG.debug("Токен валидный.");
 				LOG.debug("Статус пользователя: " + st.getText());
+				isValid = true;
 				return true;
 			}
 		}

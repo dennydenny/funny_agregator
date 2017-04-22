@@ -13,27 +13,27 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.wall.WallpostFull;
 
 import fa.grubber.DBHelper;
+import fa.grubber.wallPosts2DPostsConverter;
 import fa.poster.PosterDBHelper;
 import fa.rankprocessing.AbstractRule;
 import fa.rankprocessing.AudienceInvolvementRule;
-import fa.rankprocessing.LikesCountRule;
-import fa.rankprocessing.LikesToRepostsRule;
 import fa.rankprocessing.RankProcessingDBHelper;
-import fa.rankprocessing.Summarizer;
+
 
 public class Controller {
 
+	private static final String _version = "0.9";
 	private static final Logger LOG = LoggerFactory.getLogger(Controller.class);
 	private static DBHelper db = new DBHelper();
 	
 	public static void main(String[] args) throws InterruptedException, ApiException, ClientException  {
-		LOG.info("=== START ===");
-		
+		LOG.info("=== Funny START === version " + _version);
+				
 		if (Integer.valueOf(Settings.settings.get("is_grubber_enabled")) == 1) runGrubber();
 		if (Integer.valueOf(Settings.settings.get("is_rankprocessing_enabled")) == 1) runRankProcessing();
 		if (Integer.valueOf(Settings.settings.get("is_poster_enabled")) == 1) runPoster();
 		
-		LOG.info("=== END ===");	
+		LOG.info("=== Funny END ===");	
 	}
 	
 	// Запуск граббера.
@@ -45,25 +45,35 @@ public class Controller {
 		
 		List<WallpostFull> wallPosts = null;
 		
-		for (Public pub : publics) 
-		{
-			// Получаем список постов со стены.
-			wallPosts = Requester.getWallPostsFromPublic(pub);
-			
-			// Записываем посты в БД.
-			db.WriteDownloadedPosts(wallPosts);
-
-			// Сверяем число подписчиков в БД и в VK. Если не совпадают, то обновляем в БД.
-			int subsCount = Requester.getPublicSubsCount(pub);
-			
-			if (subsCount !=0 && subsCount != pub.getPublicSubsCount())
+			for (Public pub : publics) 
 			{
-				db.updatePublicSubsCount(pub, subsCount);
+				try {
+					// Получаем список постов со стены.
+					wallPosts = Requester.getWallPostsFromPublic(pub);
+					
+					// Конвертируем WallpostFull в список формата DownloadedPost.
+					List<DownloadedPost> posts = wallPosts2DPostsConverter.convert(wallPosts);
+					        
+					// Записываем посты в БД.
+					db.WriteDownloadedPosts(posts);
+		
+					// Сверяем число подписчиков в БД и в VK. Если не совпадают, то обновляем в БД.
+					int subsCount = Requester.getPublicSubsCount(pub);
+					
+					if (subsCount !=0 && subsCount != pub.getPublicSubsCount())
+					{
+						db.updatePublicSubsCount(pub, subsCount);
+					}
+					
+					TimeUnit.SECONDS.sleep(timeout);
+					wallPosts.clear();
+				}
+				catch (Exception e)
+				{
+					LOG.error(e.getMessage());
+					LOG.error(String.valueOf(e.getStackTrace()));
+				}
 			}
-			
-			TimeUnit.SECONDS.sleep(timeout);
-			wallPosts.clear();
-		}
 	}
 
 	// Запуск оценки постов.
@@ -82,13 +92,13 @@ public class Controller {
 		{
 			try {
 				posts = rpdb.getPostsForRanking(pub);
-				
+				/*
 				// Правило наибольшего кол-ва лайков.
 				LikesCountRule likesCountRule = new LikesCountRule(posts, pub);
 				rules.add(likesCountRule);
 				
 				// Правило отношения лайков к репостам.
-				LikesToRepostsRule likesToRepostsRule = new LikesToRepostsRule(posts);
+				RepostsToLikesRule likesToRepostsRule = new RepostsToLikesRule(posts);
 				rules.add(likesToRepostsRule);
 				
 				// Правило вовлеченности аудитории.
@@ -98,7 +108,10 @@ public class Controller {
 				// Суммирование (в самую последнюю очередь).
 				Summarizer sum = new Summarizer(posts);
 				rules.add(sum);
-							
+				*/
+				AudienceInvolvementRule invRule = new AudienceInvolvementRule(posts, pub);
+				rules.add(invRule);
+				
 				for (AbstractRule rule : rules)
 				{
 					rule.executeRanking();
@@ -141,7 +154,11 @@ public class Controller {
 				// Осуществляем репост записи на стену паблика.
 				Requester.repostPostToPublic(post);
 				LOG.info("Записываем информацию о репосте в БД.");	
-			}		
+			}
+			else
+			{
+				LOG.info("Нет подходящих постов для постинга.");
+			}
 		}
 		else
 		{

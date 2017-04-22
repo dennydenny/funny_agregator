@@ -65,17 +65,13 @@ public class PosterDBHelper {
     public List<DownloadedPost> getPostsForPosting ()
     {
     	LOG.debug("Начинаем загрузку списка постов для постинга");
-    	String query = 
-    			"SELECT dp.public_id, dp.post_id, dp.text, dp.likes_count, dp.reposts_count, dp.post_datetime "
-    			+ "FROM downloaded_posts dp, rank_processing rp "
-    			+ "WHERE dp.post_id=rp.downloaded_post_id AND "
-    			+ "dp.public_id=rp.downloaded_public_id AND "
-    			+ "rp.rule_name='SUMMARY' AND "
-    			+ "dp.post_datetime >= (NOW() - INTERVAL ? DAY) AND "
-    			+ "dp.post_id NOT IN "
-    			+ "(select downloaded_post_id FROM reposted_posts) AND "
-    			+ "dp.public_id NOT IN (SELECT DISTINCT downloaded_public_id FROM reposted_posts WHERE TIMESTAMP >= NOW() - INTERVAL ? HOUR) "
-    			+ "ORDER BY rp.rank DESC";
+    	String query = "SELECT dp.public_id, dp.post_id, dp.text, dp.likes_count, dp.reposts_count, dp.views_count, dp.post_datetime "
+    			+ "FROM rank_processing as rp, downloaded_posts as dp "
+				+ "WHERE rp.downloaded_public_id = dp.public_id AND rp.downloaded_post_id=dp.post_id "
+				+ "AND dp.post_datetime >= (CURDATE() - INTERVAL 1 DAY) and dp.is_approved = 1 "
+				+ "AND dp.post_id NOT IN (SELECT DISTINCT downloaded_post_id FROM reposted_posts) "
+				+ "AND dp.public_id NOT IN (SELECT DISTINCT downloaded_public_id FROM reposted_posts WHERE TIMESTAMP >= NOW() - INTERVAL ? HOUR)"
+				+ "ORDER by rp.rank DESC";
     	ArrayList<DownloadedPost> list = new ArrayList<DownloadedPost> ();
     	PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -84,8 +80,8 @@ public class PosterDBHelper {
         	openConnection();
         	stmt = con.prepareStatement(query);
         	// Кол-во дней от текущей даты, за которое будем загружать посты.
-            stmt.setInt(1, _dayToAnalyse);
-            stmt.setInt(2, _excludePublicInterval);
+            //stmt.setInt(1, _dayToAnalyse);
+            stmt.setInt(1, _excludePublicInterval);
             rs = stmt.executeQuery();
  
             while (rs.next()) {
@@ -95,6 +91,7 @@ public class PosterDBHelper {
             			rs.getString("text"), 
             			rs.getInt("likes_count"),
             			rs.getInt("reposts_count"),
+            			rs.getInt("views_count"),
             			rs.getString("post_datetime"));
             	
             	list.add(post);	

@@ -1,8 +1,10 @@
 package fa.rankprocessing;
 
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,27 +23,32 @@ public class LikesCountRule extends AbstractRule {
 	public void executeRanking()
 	{
 		LOG.info(String.format("Начинаем обработку постов . Правило: %s", this.getRuleName()));
-		RankProcessingDBHelper rpdb = new RankProcessingDBHelper();
+		RankProcessingDBHelper_old rpdb = new RankProcessingDBHelper_old();
 		// Массив "Пост - оценка".
 		Map<DownloadedPost, Integer> ratings = new Hashtable<DownloadedPost, Integer>();
+		
+		// Массив "Значение вычисления - Пост" (отсортированный TreeMap).
+		Map<Float, DownloadedPost> values = new TreeMap<Float, DownloadedPost>(Collections.reverseOrder());
 		
 		try {	
 			// Получаем кол-во лайков для рассматриваемый период для паблика.
 			int likes = rpdb.getLikesCountForPeriod(_pub);
 			
-			// Для каждого поста вычисляем отношение числа лайков к общему числу лайков за период, производим оценку и записываем в БД.
+			// Для каждого поста вычисляем отношение числа лайков к общему числу лайков за период.
 			for (DownloadedPost post : _posts)
 			{
 				float value = (float) post.getLikesCount()/likes;
-				value = value * 100;
-				int rank = this.rankPostByLikes(value);
-				LOG.info(String.format("Пост: %d, паблик: %d, value: %s, оценка: %s",
+				LOG.info(String.format("Пост: %d, паблик: %d, value: %s",
 						post.getPostId(),
 						post.getPublicId(),
-						String.valueOf(value),
-						String.valueOf(rank)));
-				ratings.put(post, rank);
+						String.valueOf(value)));
+				values.put(value, post);
 			}
+			
+			// Производим оценку.
+			ratings = this.rankPostsByLikes(values);
+			
+			// Записываем в БД.
 			rpdb.setRankToDB(ratings, this);	
 		}
 		catch (Exception e) {
@@ -79,23 +86,27 @@ public class LikesCountRule extends AbstractRule {
 		}
 	}
 
-	// Метод, осуществляющий оценку поста по переданному 
+	// Метод, осуществляющий оценку списка поста по переданному 
 	// значению отношения кол-во лайков поста к общему 
 	// числу лайков за период.
-	private int rankPostByLikes(float value)
+	private Map<DownloadedPost, Integer> rankPostsByLikes(Map<Float, DownloadedPost> values)
 	{
-		int rank = 1;
-
-		if (value >= 5) rank = 10;
-		if (value >= 4.5 && value < 5) rank = 9;
-		if (value >= 4 && value < 4.5) rank = 8;
-		if (value >= 3.5 && value < 4) rank = 7;
-		if (value >= 3 && value < 3.5) rank = 6;
-		if (value >= 2.5 && value < 3) rank = 5;
-		if (value >= 2 && value < 2.5) rank = 4;
-		if (value >= 1.5 && value < 2) rank = 3;
-		if (value >= 1 && value < 1.5) rank = 2;
-		
-		return rank;
+		Map<DownloadedPost, Integer> result = new Hashtable<DownloadedPost, Integer>();
+		// Первым 9 постам даём последовательную оценку 10..2, а всем остальным оценка 1.
+		int rank = 10;
+		for (Map.Entry<Float, DownloadedPost> entry : values.entrySet())
+		{
+			if (rank > 1)
+			{
+				result.put(entry.getValue(), rank);
+				rank--;
+			}
+			else
+			{
+				result.put(entry.getValue(), 1);		
+			}
+		}
+				
+		return result;
 	}
 }

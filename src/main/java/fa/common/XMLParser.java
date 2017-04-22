@@ -17,15 +17,22 @@ public class XMLParser {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(XMLParser.class);
 	private static Map<String, String> settings;
+	// poster - ./config_poster.xml
+	// other - ./config.xml
+	public static String _configFile = "./config.xml";
 
 	public static Map<String, String> ParseConfig() {
 
 		settings = new Hashtable<String, String>();
 		
 	    try {
+	    	// Код для разработки.
 	    	//ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-	    	//File file = new File(classLoader.getResource("./config.xml").getFile());
-	    	File file = new File("./config.xml");
+		    //file = new File(classLoader.getResource("config.xml").getFile());    		
+
+	    	// Код для релиза.
+	    	File file = new File(_configFile);
+	    	
 	    	DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance()
 	                             .newDocumentBuilder();
 	    	Document doc = dBuilder.parse(file);
@@ -37,11 +44,11 @@ public class XMLParser {
 	    	LOG.error("Не удалось найти файл конфигурации. Возникла ошибка: " + filenotfound.getMessage());
 	    }
 	    catch (Exception e) {
-	    	LOG.error("Возникла ошибки при парсинге XML: " + e.getMessage());
+	    	LOG.error("Возникла ошибки при парсинге XML: ", e);
 	    }
 		return settings;
 	}
-
+	
 	private static void readNode(NodeList nodeList) {
 
 	    for (int count = 0; count < nodeList.getLength(); count++) {
@@ -61,4 +68,5 @@ public class XMLParser {
 		}
 	    }
 	}
+
 }

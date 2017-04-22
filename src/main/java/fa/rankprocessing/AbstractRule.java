@@ -7,10 +7,4 @@ public abstract class AbstractRule {
 	
 	// Получение имени правила.
 	public abstract String getRuleName();
-	
-	// Запись результатов в БД.
-	public void setRankToDB()
-	{
-		System.out.println("Works!");
-	}
 }

@@ -12,8 +12,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vk.api.sdk.objects.wall.WallpostFull;
-
 import fa.common.DownloadedPost;
 import fa.common.Public;
 import fa.common.Settings;
@@ -88,24 +86,9 @@ public class DBHelper {
     }
 
     // Метод, записывающий посты в БД.
-    public void WriteDownloadedPosts (List<WallpostFull> posts)
+    public void WriteDownloadedPosts (List<DownloadedPost> downloadedPosts)
     {
-    	if (posts.isEmpty()) throw new IllegalStateException("Список постов для записи пуст.");
-    	
-    	//TODO: Вынести логику "конвертации" в отдельный метод.
-    	
-    	// "Конвертируем WallpostFull в наш DownloadedPost.
-    	ArrayList<DownloadedPost> downloadedPosts = new ArrayList<DownloadedPost>();
-    	for (WallpostFull post : posts)
-    	{
-    		DownloadedPost dpost = new DownloadedPost(post.getOwnerId() * -1, 
-    				post.getId(), 
-    				post.getText(), 
-    				post.getLikes().getCount(), 
-    				post.getReposts().getCount(),
-    				post.getDate());
-    		downloadedPosts.add(dpost);
-    	}
+    	if (downloadedPosts.isEmpty()) throw new IllegalStateException("Список постов для записи пуст.");
     	
     	openConnection();	
     	// Проверяем наличие каждого поста в нашей БД.
@@ -118,7 +101,7 @@ public class DBHelper {
     					dpost.getPostId()));
     			
     			// Проверяем, актуальное ли кол-во лайков у поста.
-    			if (!isLikeCountActual(dpost))
+    			if (!isPostInfoActual(dpost))
     			{
     				LOG.info(String.format("Информация в БД о посте неактуальна. Обновляем информацию. PublicId: %d, postId %d", 
         					dpost.getPublicId(), 
@@ -199,7 +182,7 @@ public class DBHelper {
     	// Получаем информацию о кол-ве лайков ДО обновления.
     	int oldLikesCount = getPostLikesCountFromDB(post);
     	
-    	String query = "update downloaded_posts set likes_count = ?, reposts_count = ?, timestamp = current_timestamp where public_id = ? and post_id = ?";
+    	String query = "update downloaded_posts set likes_count = ?, reposts_count = ?, views_count = ?, timestamp = current_timestamp where public_id = ? and post_id = ?";
     	PreparedStatement stmt = null;
     	
     	try {
@@ -207,8 +190,9 @@ public class DBHelper {
         	
         	stmt.setInt(1, post.getLikesCount());
         	stmt.setInt(2, post.getRepostsCount());
-        	stmt.setInt(3, post.getPublicId());
-        	stmt.setInt(4, post.getPostId());
+        	stmt.setInt(3, post.getViewsCount());
+        	stmt.setInt(4, post.getPublicId());
+        	stmt.setInt(5, post.getPostId());
         	
             stmt.executeUpdate();
             LOG.debug(String.format("Информация о посте была успешо обновлена. PublicId: %d, postId %d", 
@@ -271,7 +255,7 @@ public class DBHelper {
     			post.getPostId()));
  
     	String query = 
-    			"INSERT INTO downloaded_posts(public_id, post_id, text, likes_count, reposts_count, post_datetime) VALUES (?, ?, ?, ?, ?, ?)";
+    			"INSERT INTO downloaded_posts(public_id, post_id, text, likes_count, reposts_count, views_count, post_datetime) VALUES (?, ?, ?, ?, ?, ?, ?)";
     	PreparedStatement stmt = null;
     	
     	try {
@@ -282,7 +266,8 @@ public class DBHelper {
         	stmt.setString(3, post.getText());
         	stmt.setInt(4, post.getLikesCount());
         	stmt.setInt(5, post.getRepostsCount());
-        	stmt.setString(6, post.getPostDatetime());
+        	stmt.setInt(6, post.getViewsCount());
+        	stmt.setString(7, post.getPostDatetime());
         	
             stmt.executeUpdate();
             LOG.debug(String.format("Новый пост успешно был добавлен в нашу БД. PublicId: %d, postId %d", 
@@ -298,13 +283,13 @@ public class DBHelper {
     }
 
     // Метод, проверяющий, актуально ли число лайков в БД по сравнению с переданным постом.
-    private boolean isLikeCountActual (DownloadedPost post)
+    private boolean isPostInfoActual (DownloadedPost post)
     {
-    	LOG.debug(String.format("Проверяем, актуально ли число лайков поста в БД. PublicId: %d, postId %d", 
+    	LOG.debug(String.format("Проверяем, актуальны ли атрибуты поста в БД. PublicId: %d, postId %d", 
     			post.getPublicId(), 
     			post.getPostId()));
     	
-    	String query = "select likes_count, reposts_count from downloaded_posts dp where dp.public_id = ? and dp.post_id = ?";
+    	String query = "select likes_count, reposts_count, views_count from downloaded_posts dp where dp.public_id = ? and dp.post_id = ?";
     	PreparedStatement stmt = null;
     	ResultSet rs = null;
     	
@@ -318,17 +303,18 @@ public class DBHelper {
             if (rs.next()) {
             	int dbLikes = rs.getInt("likes_count");
             	int dbReposts = rs.getInt("reposts_count");
+            	int dbViews = rs.getInt("views_count");
             	
-            	if ((dbLikes != post.getLikesCount()) || (dbReposts != post.getRepostsCount()))
+            	if ((dbLikes != post.getLikesCount()) || (dbReposts != post.getRepostsCount() || (dbViews != post.getViewsCount())))
             	{
-            		LOG.debug(String.format("Кол-во лайков поста в БД не актуально. PublicId: %d, postId %d",
+            		LOG.debug(String.format("Атрибуты поста в БД не актуальны. PublicId: %d, postId %d",
                 			post.getPublicId(), 
                 			post.getPostId()));
             		return false;
             	}
             	else
             	{
-            		LOG.debug(String.format("Кол-во лайков поста в БД актуально. PublicId: %d, postId %d",
+            		LOG.debug(String.format("Атрибуты поста в БД актуальны. PublicId: %d, postId %d",
                 			post.getPublicId(), 
                 			post.getPostId()));
             		return true;
@@ -336,14 +322,14 @@ public class DBHelper {
             }
             else
             {
-            	LOG.debug(String.format("При проверке актуальности числа лайков не удалось найти такой пост. PublicId: %d, postId %d",
+            	LOG.debug(String.format("При проверке актуальности атрибутов поста не удалось найти такой пост. PublicId: %d, postId %d",
             			post.getPublicId(), 
             			post.getPostId()));
             	return false;
             }
         } 
         catch (SQLException sqlEx) {
-            LOG.error(String.format("При проверке наличия поста в БД возникла ошибка: %S", sqlEx.getMessage()));
+            LOG.error(String.format("При проверке актуальности атрибутов поста в БД возникла ошибка: %S", sqlEx.getMessage()));
         } 
         finally {
             try { stmt.close(); } catch(SQLException se) { /*can't do anything */ }

@@ -52,8 +52,9 @@ public class RankProcessingDBHelper {
     {
     	LOG.debug("Начинаем загрузку списка постов для оценки.");
     	String query = 
-    			"SELECT public_id, post_id, text, likes_count, reposts_count, post_datetime FROM downloaded_posts "
-    			+ "WHERE post_datetime >= (NOW() - INTERVAL ? DAY) AND public_id = ?";
+    			"SELECT public_id, post_id, text, likes_count, reposts_count, views_count, post_datetime FROM downloaded_posts "
+    			+ "WHERE post_datetime >= (CURDATE() - INTERVAL ? DAY) AND post_datetime < (CURDATE() + INTERVAL 1 DAY) "
+    			+ "AND public_id = ?";
     	ArrayList<DownloadedPost> list = new ArrayList<DownloadedPost> ();
     	PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -73,12 +74,15 @@ public class RankProcessingDBHelper {
             			rs.getString("text"), 
             			rs.getInt("likes_count"),
             			rs.getInt("reposts_count"),
+            			rs.getInt("views_count"),
             			rs.getString("post_datetime"));
             	
             	list.add(post);	
             }
             
-         LOG.info(String.format("Список постов для оценки успешно загружен. Кол-во постов: %d.", list.size()));
+         LOG.info(String.format("Список постов для оценки успешно загружен. Кол-во постов: %d, PublicId: %d.", 
+        		 list.size(),
+        		 pub.getPublicId()));
          return list;
         } 
         catch (SQLException sqlEx) {
@@ -97,7 +101,7 @@ public class RankProcessingDBHelper {
     {
     	LOG.debug(String.format("Загружаем суммарное кол-во лайков. PublicId: %d", pub.getPublicId()));
     	String query = 
-    			"SELECT sum(likes_count) as 'likes'  FROM downloaded_posts WHERE post_datetime >= (NOW() - INTERVAL ? DAY) AND public_id = ?";
+    			"SELECT sum(likes_count) as 'likes'  FROM downloaded_posts WHERE post_datetime >= (CURDATE() - INTERVAL ? DAY) AND public_id = ?";
     	PreparedStatement stmt = null;
         ResultSet rs = null;
     	 
@@ -132,17 +136,17 @@ public class RankProcessingDBHelper {
     }
 
     // Метод, осуществляющий сохранение информации об оценках в БД.
-    public void setRankToDB(Map<DownloadedPost, Integer> ranks, AbstractRule rule)
+    public void setRankToDB(Map<DownloadedPost, Float> ranks, AbstractRule rule)
     {
     	LOG.debug(String.format("Устанавливаем оценку поста в БД. Правило: %s.", rule.getRuleName()));
     	
     	openConnection();
     	// Проверяем наличие записи об этом правиле.
     	// Если запись есть, то обновляем оценку и время. Если нет, то вставляем новую.
-    	for (Map.Entry<DownloadedPost, Integer> entry : ranks.entrySet())
+    	for (Map.Entry<DownloadedPost, Float> entry : ranks.entrySet())
     	{
     		DownloadedPost post = entry.getKey();
-    		int rank = entry.getValue();
+    		float rank = entry.getValue();
     		
     		if (this.isRankRecordExist(post, rule))
     		{
@@ -216,7 +220,7 @@ public class RankProcessingDBHelper {
     }
 
     // Метод, обновляющий информацию об оценке данного поста, согласно переданному правилу.
-    private void updateRuleRank(DownloadedPost post, AbstractRule rule, int rank)
+    private void updateRuleRank(DownloadedPost post, AbstractRule rule, float rank)
     {
     	LOG.debug(String.format("Обновляем оценку. PublicId: %d, postId %d, Правило: %s", 
     			post.getPublicId(), 
@@ -230,7 +234,7 @@ public class RankProcessingDBHelper {
     	try {
         	stmt = con.prepareStatement(query);
         	
-        	stmt.setInt(1, rank);
+        	stmt.setFloat(1, rank);
         	stmt.setInt(2, post.getPostId());
         	stmt.setString(3, rule.getRuleName());
         	stmt.setInt(4, post.getPublicId());
@@ -251,7 +255,7 @@ public class RankProcessingDBHelper {
     }
 
     // Метод, осуществляющий вставку новой записи об оценке поста, согласно переданному правилу.
-    private void insertNewRuleRecord (DownloadedPost post, AbstractRule rule, int rank)
+    private void insertNewRuleRecord (DownloadedPost post, AbstractRule rule, float rank)
     {
     	LOG.debug(String.format("Вставляем новую запись об оценке в нашу БД. PublicId: %d, postId %d, Правило: %s", 
     	    			post.getPublicId(), 
@@ -267,7 +271,7 @@ public class RankProcessingDBHelper {
         	
         	stmt.setInt(1, post.getPostId());
         	stmt.setString(2, rule.getRuleName());
-        	stmt.setInt(3, rank);
+        	stmt.setFloat(3, rank);
         	stmt.setInt(4, post.getPublicId());
         	
             stmt.executeUpdate();

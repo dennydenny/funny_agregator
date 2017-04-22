@@ -18,7 +18,7 @@ public class Summarizer extends AbstractRule {
 	@Override
 	public void executeRanking() {
 		LOG.info(String.format("Начинаем обработку постов . Правило: %s", this.getRuleName()));
-		RankProcessingDBHelper rpdb = new RankProcessingDBHelper();
+		RankProcessingDBHelper_old rpdb = new RankProcessingDBHelper_old();
 		
 		// Массив "Пост - оценка".
 		Map<DownloadedPost, Integer> ratings = new Hashtable<DownloadedPost, Integer>();

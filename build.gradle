@@ -30,7 +30,7 @@ jar {
 // In this section you declare the dependencies for your production and test code
 dependencies {
     // The production code uses the SLF4J logging API at compile time
-    compile 'com.vk.api:sdk:0.4.3'
+    compile 'com.vk.api:sdk:0.5.1'
     compile 'mysql:mysql-connector-java:5.1.39'
     compile 'org.apache.commons:commons-configuration2:2.1.1'
     

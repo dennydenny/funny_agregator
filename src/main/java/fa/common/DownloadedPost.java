@@ -1,6 +1,7 @@
 package fa.common;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class DownloadedPost {
 	// Идентификатор паблика.
@@ -17,6 +18,9 @@ public class DownloadedPost {
 	
 	// Кол-во репостов поста.
 	private int _repostsCount;
+	
+	// Кол-во просмотров поста.
+	private int _viewsCount;
 	
 	// Дата и время публикации поста в VK.
 	private String _postDatetime;
@@ -77,6 +81,17 @@ public class DownloadedPost {
 		this._repostsCount = repostsCount;
 	}
 	
+	// Геттер/сеттер ViewsCount
+	public int getViewsCount ()
+	{
+		return this._viewsCount;
+	}
+		
+	public void setViewsCount (int viewsCount)
+	{
+		this._viewsCount = viewsCount;
+	}
+	
 	// Геттер/сеттер Datetime
 	public String getPostDatetime ()
 	{
@@ -94,31 +109,33 @@ public class DownloadedPost {
 	}
 	
 	// Конструктор с int postDatetime
-	public DownloadedPost(int publicId, int postId, String text, int likesCount, int repostsCount, int postDatetime)
+	public DownloadedPost(int publicId, int postId, String text, int likesCount, int repostsCount, int viewsCount, int postDatetime)
 	{
 		this.setPublicId(publicId);
 		this.setPostId(postId);
 		this.setText(text);
 		this.setLikesCount(likesCount);
 		this.setRepostsCount(repostsCount);
+		this.setViewsCount(viewsCount);
 		this.setPostDatetime(postDatetime);
 	}
 	
 	// Конструктор с String postDatetime
-	public DownloadedPost(int publicId, int postId, String text, int likesCount, int repostsCount, String postDatetime)
+	public DownloadedPost(int publicId, int postId, String text, int likesCount, int repostsCount, int viewsCount, String postDatetime)
 	{
 		this.setPublicId(publicId);
 		this.setPostId(postId);
 		this.setText(text);
 		this.setLikesCount(likesCount);
 		this.setRepostsCount(repostsCount);
+		this.setViewsCount(viewsCount);
 		this.setPostDatetime(postDatetime);
 	}	
 	
 	// Метод, осуществляющий конвертацию Unix time в Date, который примет MySQL.
 	private String convertUnixtimeToDate(int unixtime)
 	{
-		java.util.Date time=new java.util.Date((long)unixtime*1000);
+		Date time=new java.util.Date((long)unixtime*1000);
 		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
 	}
 
