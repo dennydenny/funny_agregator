@@ -67,7 +67,7 @@ public class PosterDBHelper {
     	String query = "SELECT dp.public_id, dp.post_id, dp.text, dp.likes_count, dp.reposts_count, dp.views_count, dp.post_datetime "
     			+ "FROM rank_processing as rp, downloaded_posts as dp "
 				+ "WHERE rp.downloaded_public_id = dp.public_id AND rp.downloaded_post_id=dp.post_id "
-				+ "AND dp.post_datetime >= (CURDATE() - INTERVAL 1 DAY) and dp.is_approved = 1 "
+				+ "and dp.is_approved = 1 "
 				+ "AND dp.post_id NOT IN (SELECT DISTINCT downloaded_post_id FROM reposted_posts) "
 				+ "AND dp.public_id NOT IN (SELECT DISTINCT downloaded_public_id FROM reposted_posts WHERE TIMESTAMP >= NOW() - INTERVAL ? HOUR)"
 				+ "ORDER by rp.rank DESC";
