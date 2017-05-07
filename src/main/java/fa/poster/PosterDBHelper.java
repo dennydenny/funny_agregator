@@ -20,8 +20,7 @@ public class PosterDBHelper {
     private static final String user = Settings.settings.get("database_user");
     private static final String password = Settings.settings.get("database_password");
     private static final Logger LOG = LoggerFactory.getLogger(PosterDBHelper.class);
-    // Кол-во дней от текущего времени, за которые проводится оценка.
-    private static final int _dayToAnalyse = Integer.valueOf(Settings.settings.get("day_to_analyse"));
+
     // Минимальное расстояние между двумя репостами.
     private static final int _hoursAfterLastRepost = Integer.valueOf(Settings.settings.get("hours_after_last_repost"));
     private static final int _excludePublicInterval = Integer.valueOf(Settings.settings.get("exclude_public_interval"));
