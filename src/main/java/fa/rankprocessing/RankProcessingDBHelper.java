@@ -96,45 +96,6 @@ public class RankProcessingDBHelper {
 		return null;
     }
 
-    // Метод для получения кол-ва лайков всех постов за период, указанный в _dayToAnalyse.
-    public int getLikesCountForPeriod(Public pub)
-    {
-    	LOG.debug(String.format("Загружаем суммарное кол-во лайков. PublicId: %d", pub.getPublicId()));
-    	String query = 
-    			"SELECT sum(likes_count) as 'likes'  FROM downloaded_posts WHERE post_datetime >= (CURDATE() - INTERVAL ? DAY) AND public_id = ?";
-    	PreparedStatement stmt = null;
-        ResultSet rs = null;
-    	 
-        try {
-        	openConnection();
-        	stmt = con.prepareStatement(query);
-        	
-        	// Кол-во дней от текущей даты, за которое будем загружать посты.
-            stmt.setInt(1, _dayToAnalyse);
-            stmt.setInt(2, pub.getPublicId());
-            rs = stmt.executeQuery();
-            
- 
-            if (rs.next()) {
-            	int likes = rs.getInt("likes");
-            	LOG.info(String.format("Суммарное кол-во лайков успешно загружено. Кол-во лайков: %d, PublicId: %d.", 
-            			likes,
-            			pub.getPublicId()));
-            	return likes;
-            }
-            LOG.error(String.format("Не удалось загрузить суммарное кол-во лайков. PublicId: %d.", pub.getPublicId()));
-        } 
-        catch (Exception e) {
-            LOG.error(String.format("При загрузке суммарного кол-ва лайков возникла ошибка: %S", e.getMessage()));
-        } 
-        finally {
-            closeConnection();
-            try { stmt.close(); } catch(SQLException se) { /*can't do anything */ }
-            try { rs.close(); } catch(SQLException se) { /*can't do anything */ }
-        }
-		return 0;
-    }
-
     // Метод, осуществляющий сохранение информации об оценках в БД.
     public void setRankToDB(Map<DownloadedPost, Float> ranks, AbstractRule rule)
     {
