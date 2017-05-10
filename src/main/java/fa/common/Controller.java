@@ -39,6 +39,8 @@ public class Controller {
 	// Запуск граббера.
 	private static void runGrubber() throws InterruptedException, ApiException, ClientException
 	{	
+		long startTime = System.currentTimeMillis();
+
 		int timeout = Integer.valueOf(Settings.settings.get("vk_api_request_timeout"));
 		// Получаем список пабликов.
 		ArrayList<Public> publics = db.getPublics();
@@ -74,11 +76,15 @@ public class Controller {
 					LOG.error(String.valueOf(e.getStackTrace()));
 				}
 			}
+		long endTime = System.currentTimeMillis();
+		LOG.info(String.format("Время выполнения grubber %d ms.", (endTime - startTime)));
 	}
 
 	// Запуск оценки постов.
 	private static void runRankProcessing()
 	{
+		long startTime = System.currentTimeMillis();
+		
 		RankProcessingDBHelper rpdb = new RankProcessingDBHelper();
 		
 		// Список пабликов.
@@ -129,11 +135,15 @@ public class Controller {
 				LOG.error(String.valueOf(e.getStackTrace()));
 			}
 		}
+		long endTime = System.currentTimeMillis();
+		LOG.info(String.format("Время выполнения rankProcessing %d ms.", (endTime - startTime)));
 	}
 
 	// Запуск постера.
 	private static void runPoster()
 	{
+		long startTime = System.currentTimeMillis();
+		
 		//Requester.repostPostToPublic(null);
 		PosterDBHelper pdb = new PosterDBHelper();
 		
@@ -163,6 +173,9 @@ public class Controller {
 		else
 		{
 			LOG.info("Репост запрещён. Poster завершает свою работу.");	
-		}	
+		}
+		
+		long endTime = System.currentTimeMillis();
+		LOG.info(String.format("Время выполнения poster %d ms.", (endTime - startTime)));
 	}
 }

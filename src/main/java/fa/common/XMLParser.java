@@ -19,7 +19,7 @@ public class XMLParser {
 	private static Map<String, String> settings;
 	// poster - ./config_poster.xml
 	// other - ./config.xml
-	public static String _configFile = "./config.xml";
+	public static String _configFile = "./config_poster.xml";
 
 	public static Map<String, String> ParseConfig() {
 
@@ -27,11 +27,11 @@ public class XMLParser {
 		
 	    try {
 	    	// Код для разработки.
-	    	//ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-		    //file = new File(classLoader.getResource("config.xml").getFile());    		
+	    	ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+		    File file = new File(classLoader.getResource("config.xml").getFile());    		
 
 	    	// Код для релиза.
-	    	File file = new File(_configFile);
+	    	//File file = new File(_configFile);
 	    	
 	    	DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance()
 	                             .newDocumentBuilder();
