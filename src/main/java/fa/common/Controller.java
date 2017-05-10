@@ -22,7 +22,7 @@ import fa.rankprocessing.RankProcessingDBHelper;
 
 public class Controller {
 
-	private static final String _version = "1.1";
+	private static final String _version = "1.2";
 	private static final Logger LOG = LoggerFactory.getLogger(Controller.class);
 	private static DBHelper db = new DBHelper();
 	
