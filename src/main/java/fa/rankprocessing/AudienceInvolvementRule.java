@@ -17,7 +17,6 @@ public class AudienceInvolvementRule extends AbstractRule {
 	private static final Logger LOG = LoggerFactory.getLogger(AudienceInvolvementRule.class);
 	private final String _ruleName = "Audience Involvement";
 	private List <DownloadedPost> _posts;
-	private final Public _pub;
 	
 	// Метод запуска оценки.
 	public void executeRanking()
