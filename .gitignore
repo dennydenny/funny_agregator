@@ -52,6 +52,7 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+bin/
 target/
 pom.xml.tag
 pom.xml.releaseBackup
