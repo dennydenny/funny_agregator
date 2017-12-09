@@ -68,7 +68,7 @@ public class AudienceInvolvementRule extends AbstractRule {
 			throw new IllegalStateException("Список постов пуст.");
 		}
 		
-		if (pub != null) 
+		/* if (pub != null) 
 		{
 			this._pub = pub;
 		}
@@ -76,5 +76,6 @@ public class AudienceInvolvementRule extends AbstractRule {
 		{
 			throw new IllegalStateException("Передан пустой паблик.");
 		}
+		*/
 	}
 }
